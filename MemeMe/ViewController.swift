@@ -25,7 +25,6 @@ UITextFieldDelegate{
     @IBOutlet weak var bottomToolbar: UIToolbar!
     
     var memedImage : UIImage!
-    
 
     
     @IBAction func share(_ sender: UIBarButtonItem) {
@@ -56,26 +55,37 @@ UITextFieldDelegate{
     }
     
     
+    let imagePicker = UIImagePickerController()
     
-    @IBAction func pickAnImage(_ sender: Any) {
-        if UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.photoLibrary) {
-            let imagePicker = UIImagePickerController()
+    func afterPicking(){
+        
+        imagePicker.delegate = self
+        present(imagePicker, animated: true, completion: nil)
+    }
+
+    
+    
+    @IBAction func pickAnImageFromAlbum(_ sender: UIBarButtonItem) {
+    
+            if UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.photoLibrary) {
+
+            afterPicking()
             imagePicker.sourceType = .photoLibrary
-            imagePicker.delegate = self
-            present(imagePicker, animated: true, completion: nil)
+
         }
     }
     
     @IBAction func pickAnImageFromCmera(_ sender: Any) {
         if UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.camera) {
-            let imagePicker = UIImagePickerController()
+
+            afterPicking()
             imagePicker.sourceType = .camera
-            imagePicker.delegate = self
-            present(imagePicker, animated: true, completion: nil)
+  
         }
         
     }
     
+  
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         if let image = info[UIImagePickerControllerOriginalImage] as? UIImage{
@@ -168,27 +178,29 @@ UITextFieldDelegate{
         return memedImage
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        
+    func configureTextField(textField: UITextField) {
         let memeTextAttributes:[String:Any] = [
             NSStrokeColorAttributeName: UIColor.black,
             NSForegroundColorAttributeName: UIColor.white,
             NSFontAttributeName: UIFont(name: "HelveticaNeue-CondensedBlack", size: 40)!,
             NSStrokeWidthAttributeName: -3]
         
-        topTextField.defaultTextAttributes = memeTextAttributes
-        bottomTextField.defaultTextAttributes = memeTextAttributes
-        topTextField.textAlignment = NSTextAlignment.center
-        bottomTextField.textAlignment = NSTextAlignment.center
-        
+        textField.defaultTextAttributes = memeTextAttributes
+        textField.textAlignment = NSTextAlignment.center
+    }
+    
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
         topTextField.delegate = self
         bottomTextField.delegate = self
-        
+
         subscribeToKeyboardNotifications()
+
+        configureTextField(textField: topTextField)
+        configureTextField(textField: bottomTextField)
         
-        //        shareButton.isEnabled = false
+
     }
 }
 
